@@ -4,12 +4,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class IsBipartitie {
+public class Algo1_5 {
 		
 	public static void main(String[] args){		
 		Graph g = new Graph();
 
-		try (BufferedReader br = new BufferedReader(new FileReader("/Users/chienlu/input.txt"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	g.addEdge(new Edge(new Node(Integer.valueOf(line.split(" ")[0])), new Node(Integer.valueOf(line.split(" ")[1]))));
@@ -193,6 +193,7 @@ public class IsBipartitie {
 		}
 		
 		public ArrayList BFSList(){
+			
 			ArrayList BFSList = new ArrayList<ArrayList<Set>>();
 			
 			List<Integer> nodeList = new ArrayList<Integer>(nodeNames);
@@ -227,8 +228,10 @@ public class IsBipartitie {
 		public void printIsBipartitie(){
 			if (isBipartitie()){
 				ArrayList<ArrayList<Set<Integer>>> BFSList = BFSList();
-				Set<Integer> outsetA = new TreeSet<Integer>();
-				Set<Integer> outsetB = new TreeSet<Integer>();
+				
+				TreeSet<Integer> outsetA = new TreeSet<Integer>();
+				TreeSet<Integer> outsetB = new TreeSet<Integer>();
+				
 				
 				for (int i = 0; i < BFSList.size(); i++){
 					Set<Integer> setA = new TreeSet<Integer>();
@@ -244,7 +247,7 @@ public class IsBipartitie {
 					//sort
 					int firstInA = (int) new ArrayList(setA).get(0);
 					int firstInB = (int) new ArrayList(setB).get(0);
-										
+					
 					if(firstInA < firstInB){
 						outsetA.addAll(setA);
 						outsetB.addAll(setB);
@@ -252,7 +255,8 @@ public class IsBipartitie {
 						outsetB.addAll(setA);
 						outsetA.addAll(setB);
 					};
-										
+					
+					
 				}
 				
 				System.out.println(outsetA.toString().replaceAll("[,\\[\\]]", ""));
@@ -312,8 +316,10 @@ public class IsBipartitie {
 					break;
 				}
 			} 
+			
 			return L;
 		}
+
 	}	
 }
 
