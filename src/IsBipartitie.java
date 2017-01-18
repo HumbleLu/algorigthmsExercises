@@ -5,12 +5,18 @@ public class IsBipartitie {
 	public static void main(String[] args){		
 		Graph g = new Graph();
 
-		g.addEdge(new Edge(new Node(2), new Node(1)));
-		g.addEdge(new Edge(new Node(2), new Node(3)));
-		g.addEdge(new Edge(new Node(3), new Node(4)));
-		g.addEdge(new Edge(new Node(5), new Node(2)));
-		g.addEdge(new Edge(new Node(6), new Node(7)));
-		g.addEdge(new Edge(new Node(2), new Node(4)));
+		g.addEdge(new Edge(new Node(3), new Node(6)));
+		g.addEdge(new Edge(new Node(4), new Node(6)));
+		g.addEdge(new Edge(new Node(5), new Node(3)));
+		g.addEdge(new Edge(new Node(0), new Node(3)));
+		g.addEdge(new Edge(new Node(4), new Node(5)));
+		g.addEdge(new Edge(new Node(7), new Node(4)));
+		g.addEdge(new Edge(new Node(1), new Node(0)));
+		g.addEdge(new Edge(new Node(8), new Node(4)));
+		g.addEdge(new Edge(new Node(1), new Node(8)));
+		
+		//System.out.println(g.isBipartitie());
+		//System.out.println(g.BFSList());
 		
 		g.printIsBipartitie();
 	}
@@ -149,21 +155,21 @@ public class IsBipartitie {
 		boolean isBipartitie = true;
 		
 		public boolean isBipartitie(){
-			HashSet<Integer> nodeList = new HashSet<Integer>(nodeNames);
-			HashSet<Integer> nodeListFull = new HashSet<Integer>(nodeNames);
+			List<Integer> nodeList = new ArrayList<Integer>(nodeNames);
+			List<Integer> nodeListFull = new ArrayList<Integer>(nodeNames);
 			ArrayList<Set<Integer>> BFS;
 			Set nodeInBFS;
 			
 			//Current Node
-			for(int n : nodeNames){
-				BFS = BFS(n);			
+			for(int i = 0; i < nodeList.size(); i++){
+				BFS = BFS(nodeList.get(i));			
 				nodeInBFS = new HashSet<Integer>();
 
 				//For every layer
-				for(int i = 0; i < BFS.size(); i++){
+				for(int k = 0; k < BFS.size(); k++){
 					//For every edge
 					for(Edge e : edges){
-						boolean edgeInsameLayer = BFS.get(i).contains(e.getNode1().getName()) & BFS.get(i).contains(e.getNode2().getName());
+						boolean edgeInsameLayer = BFS.get(k).contains(e.getNode1().getName()) & BFS.get(k).contains(e.getNode2().getName());
 						if(edgeInsameLayer){
 							return false;
 						}
@@ -171,24 +177,90 @@ public class IsBipartitie {
 				}
 				
 				//remove nodes already in current BFS
-				for(int i = 0; i < BFS.size(); i++){
-					nodeInBFS.addAll((Collection) BFS.get(i));
+				for(int j = 0; j < BFS.size(); j++){
+					nodeInBFS.addAll((Collection) BFS.get(j));
 				}
 				
 				for(int m : nodeListFull){
 					if(nodeInBFS.contains(m)){
-						nodeList.remove(m);
+						nodeList.remove(new Integer(m));
 					}
 				}
-				nodeListFull = new HashSet<Integer>(nodeList);
+				nodeListFull = new ArrayList<Integer>(nodeList);
 			}
 						
 			return true;
 		}
 		
+		public ArrayList BFSList(){
+			
+			ArrayList BFSList = new ArrayList<ArrayList<Set>>();
+			
+			List<Integer> nodeList = new ArrayList<Integer>(nodeNames);
+			List<Integer> nodeListFull = new ArrayList<Integer>(nodeNames);
+			ArrayList<Set<Integer>> BFS;
+			Set nodeInBFS;
+			
+			//Current Node
+			for(int i=0; i< nodeList.size(); i++){
+				BFS = BFS(nodeList.get(i));			
+				nodeInBFS = new HashSet<Integer>();
+				
+				//remove nodes already in current BFS
+				for(int j = 0; j < BFS.size(); j++){
+					nodeInBFS.addAll((Collection) BFS.get(j));
+				}
+				
+				for(int m : nodeListFull){
+					if(nodeInBFS.contains(m)){
+						nodeList.remove(new Integer(m));
+					}
+				}
+				nodeListFull = new ArrayList<Integer>(nodeList);
+				
+				BFSList.add(BFS);
+			}
+			
+			return BFSList;
+		}
+		
 		public void printIsBipartitie(){
 			if (isBipartitie()){
-				System.out.println("Not Yet");
+				ArrayList<ArrayList<Set<Integer>>> BFSList = BFSList();
+				
+				HashSet<Integer> outsetA = new HashSet<Integer>();
+				HashSet<Integer> outsetB = new HashSet<Integer>();
+				
+				
+				for (int i = 0; i < BFSList.size(); i++){
+					Set<Integer> setA = new HashSet<Integer>();
+					Set<Integer> setB = new HashSet<Integer>();
+					ArrayList<Set<Integer>> BFS = BFSList.get(i);
+					for(int j = 0; j < BFS.size(); j+=2){
+						setA.addAll(BFS.get(j));
+						if(j + 1 < BFS.size()){
+							setB.addAll(BFS.get(j+1));
+						}
+					}
+					
+					//sort
+					int firstInA = (int) new ArrayList(setA).get(0);
+					int firstInB = (int) new ArrayList(setB).get(0);
+					
+					if(firstInA < firstInB){
+						outsetA.addAll(setA);
+						outsetB.addAll(setB);
+					}else{
+						outsetB.addAll(setA);
+						outsetA.addAll(setB);
+					};
+					
+					
+				}
+				
+				System.out.println(outsetA.toString().replaceAll("[,\\[\\]]", ""));
+				System.out.print(outsetB.toString().replaceAll("[,\\[\\]]", ""));
+				
 			}else{
 				System.out.print("Not bipartite!");
 			}
